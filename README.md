@@ -1,12 +1,12 @@
 # Git Practical Activities
-**Student:** Tushar Kaushik **Repo:** git-practical-activities
+**Student:** Coder-sus | **University:** UTS
 
 ---
 
 ## Lecture 1 - Git Fundamentals
 
 ### Activity 1 - Create and Initialize a Repository
-Created a remote repository on GitHub, initialised a local repo and linked them.
+Initialised a local Git repo and linked it to a remote repository on GitHub.
 
 ```bash
 mkdir git-practical-activities && cd git-practical-activities
@@ -20,7 +20,7 @@ git remote -v
 ---
 
 ### Activity 2 - Clone and Associate a Repository
-Cloned the repo locally, made an initial commit and pushed to remote.
+Cloned the remote repo locally and made the first commit.
 
 ```bash
 git clone https://github.com/Coder-sus/git-practical-activities.git
@@ -35,7 +35,7 @@ git push -u origin main
 ---
 
 ### Activity 3 - Branching and Merging
-Created two feature branches, made changes on each and merged both into main.
+Created two feature branches independently and merged both back into main.
 
 ```bash
 git checkout -b feature-1
@@ -54,21 +54,22 @@ git push origin main
 ---
 
 ### Activity 4 - Amend, Revert, Reset and Fetch by Hash
+Used amend to fix a commit message, revert to undo a commit safely, reset to go back to a previous state, and checkout to inspect an old commit.
 
 ```bash
-# Amend
+# Amend the last commit message
 git commit --amend -m "Updated index.html with description"
 git push origin main --force
 
-# Revert
+# Revert a specific commit by hash
 git revert d802eb8 --no-edit
 git push origin main
 
-# Reset
+# Hard reset to a previous commit
 git reset --hard 5678efg
 git push origin main --force
 
-# Checkout by hash
+# Inspect a specific commit then return to main
 git checkout cdef456
 git checkout main
 ```
@@ -78,12 +79,12 @@ git checkout main
 ---
 
 ### Activity 5 - Rebase and Resolve Conflicts
-Created two branches that both modified the same file to force a conflict, then rebased and resolved it.
+Created two branches editing the same file to deliberately cause a conflict, then rebased and resolved it manually.
 
 ```bash
 git checkout branch-a
 git rebase main
-# conflict appears -- resolve it, then:
+# resolve conflict in the file, then:
 git add activities/lecture4/index.html
 git rebase --continue
 git push origin branch-a --force
@@ -97,27 +98,35 @@ git push origin branch-a --force
 ## Lecture 2 - GitHub Actions Workflow
 
 ### Activity 1 - Setup Workflow
-Created `.github/workflows/main.yml` triggering on push to main.
+Created a workflow file that triggers automatically on every push to main.
 
 ![Workflow listed](screenshots/L2_A1_workflow_listed.png)
 
+---
+
 ### Activity 2 - Update HTML Step
-Workflow appends a timestamped paragraph tag to `index.html` on every push. GitHub Pages enabled.
+On each push, the workflow detects the GitHub actor and appends a timestamped line to `index.html`. GitHub Pages was enabled to serve the file live.
 
 ![Pages enabled](screenshots/L2_A2_pages_enabled.png)
 
+---
+
 ### Activity 3 - Update README Step
-Workflow appends actor name, timestamp and commit hash to `README.md` on every push.
+The workflow appends the actor name, timestamp and short commit hash to `README.md` as a log entry after each push.
 
 ![README log](screenshots/L2_A3_readme_log.png)
 
+---
+
 ### Activity 4 - Commit Changes Step and Permissions
-Workflow commits and pushes changes back to the repo. Read and write permissions set.
+The workflow commits the updated files and pushes them back to the repo using the GitHub token. Read and write permissions were enabled in repository settings.
 
 ![Permissions](screenshots/L2_A4_permissions.png)
 
+---
+
 ### Activity 5 - Test the Workflow
-Pushed a change and verified all 4 steps completed successfully.
+Triggered the workflow with a push and confirmed all 4 steps completed successfully. Verified the live GitHub Pages site showed the updated content.
 
 ![Workflow success](screenshots/L2_A5_workflow_success.png)
 ![Pages live](screenshots/L2_A5_pages_live.png)
@@ -127,48 +136,59 @@ Pushed a change and verified all 4 steps completed successfully.
 ## Lecture 3 - Custom Docker Action
 
 ### Activity 3 - Project Structure
+The repo follows a specific structure with the Dockerfile at the root and all scripts inside `.github/scripts/`.
 
 ```
 git-practical-activities/
 ├── README.md
 ├── Dockerfile
 ├── data.txt
-├── .github/
-│   ├── actions/vowel-frequency-analyzer/
-│   │   └── action.yml
-│   ├── workflows/
-│   │   └── ci.yml
-│   └── scripts/
-│       ├── frequency.py
-│       ├── update_readme.sh
-│       └── entrypoint.sh
+└── .github/
+    ├── actions/vowel-frequency-analyzer/
+    │   └── action.yml
+    ├── workflows/
+    │   └── ci.yml
+    └── scripts/
+        ├── frequency.py
+        ├── update_readme.sh
+        └── entrypoint.sh
 ```
 
 ![Repo structure](screenshots/L3_A3_repo_structure.png)
 
+---
+
 ### Activity 4 - ci.yml
-Workflow builds a Docker image and runs the container, passing the GitHub actor as an environment variable.
+The workflow builds the Docker image from the Dockerfile and runs the container, passing the GitHub actor username as an environment variable.
+
+---
 
 ### Activity 5 - action.yml
-Custom action definition using Docker, specifying the entrypoint script and file input.
+Defines the custom GitHub Action, specifying Docker as the runner and `entrypoint.sh` as the script to execute inside the container.
+
+---
 
 ### Activity 6 - frequency.py
-Python script that counts vowel frequency in a text file using Counter.
+Reads `data.txt`, converts to lowercase and counts each vowel using Python's Counter. Exits with an error if the file is not found.
 
 ```bash
 python3 activities/lecture3/.github/scripts/frequency.py activities/lecture3/data.txt
-# Output: Counter({'e': 20, 'a': 18, 'i': 15, 'o': 13, 'u': 11})
+# Counter({'e': 20, 'a': 18, 'i': 15, 'o': 13, 'u': 11})
 ```
 
 ![Frequency output](screenshots/L3_A6_frequency_output.png)
 
+---
+
 ### Activities 7 and 8 - update_readme.sh and entrypoint.sh
-Shell scripts that run the Python analyser, then append results with username and timestamp to README.
+`entrypoint.sh` runs the Python script and captures the result. It then calls `update_readme.sh` which appends the result, username and timestamp to `README.md` and pushes the change.
 
 ![README updated](screenshots/L3_A78_readme_updated.png)
 
+---
+
 ### Activity 9 - Dockerfile
-Container built from python:3.9-slim, installs git, copies project files and runs entrypoint.sh.
+Uses `python:3.9-slim` as the base image, installs git, copies all project files and sets `entrypoint.sh` as the container entry point.
 
 ![Docker run success](screenshots/L3_A9_docker_run_success.png)
 
@@ -177,7 +197,7 @@ Container built from python:3.9-slim, installs git, copies project files and run
 ## Lecture 4 - Full CI/CD Pipeline
 
 ### Activity 3 - todo.py
-Python task management system with Task and TaskPool classes.
+Implements two classes: `Task` (title, status, mark_completed) and `TaskPool` (add, filter by ToDo or Done). Prints all open and completed tasks.
 
 ```bash
 python3 activities/lecture4/todo.py
@@ -185,8 +205,10 @@ python3 activities/lecture4/todo.py
 
 ![todo output](screenshots/L4_A3_todo_output.png)
 
+---
+
 ### Activity 4 - todo-test.py
-Unit tests for the TaskPool class. All 3 tests pass.
+Three unit tests verify that tasks can be added, open tasks are returned correctly and done tasks are returned correctly. All pass.
 
 ```bash
 python3 activities/lecture4/todo-test.py
@@ -194,32 +216,40 @@ python3 activities/lecture4/todo-test.py
 
 ![Tests pass](screenshots/L4_A4_tests_pass.png)
 
+---
+
 ### Activities 5, 6 and 7 - update_index.sh, entrypoint.sh, Dockerfile
-Scripts that inject task lists and test results into index.html, run via Docker container.
+`entrypoint.sh` runs both Python scripts and pipes output to files. `update_index.sh` injects the task lists and test results into the `<pre>` tags in `index.html`. The Dockerfile packages all of this and sets the entrypoint.
 
 ![Index updated](screenshots/L4_A567_index_updated.png)
 
+---
+
 ### Activity 8 - ci.yml
-Builds and runs the Docker container on every push to main.
+Builds the Docker image tagged `task-manager:latest` and runs the container on every push to main, passing the GitHub actor as an environment variable.
+
+---
 
 ### Activity 9 - tracker.yml
-Triggers on PR close. If merged, labels the linked issue as done via GitHub API.
+Listens for pull request close events. If the PR was merged, it extracts the issue number from `Closes #N` in the PR description and labels that issue as done via the GitHub API.
 
 ![Issue labelled](screenshots/L4_A9_issue_labelled.png)
 
+---
+
 ### Activity 10 - Testing the CI/CD Pipeline
+Completed a full end-to-end test by creating an issue, opening a PR that references it, and merging to trigger both workflows.
 
 | Step | Action | Result |
 |------|--------|--------|
 | 1 | Created GitHub Project board | Done |
 | 2 | Created issue and assigned to self | Done |
-| 3 | Created branch, committed, pushed | Done |
-| 4 | Created PR with Closes #1 in description | Done |
-| 5 | Merged PR, triggered ci.yml | Done |
-| 6 | Merged PR, triggered tracker.yml | Done |
-| 7 | index.html updated with task and test data | Done |
+| 3 | Created branch, committed and pushed | Done |
+| 4 | Opened PR with Closes #1 in description | Done |
+| 5 | Merged PR, ci.yml triggered | Done |
+| 6 | Merged PR, tracker.yml triggered | Done |
+| 7 | index.html updated with latest task and test data | Done |
 
 ![Project board](screenshots/L4_A10_project_board.png)
 ![Pull request](screenshots/L4_A10_pull_request.png)
 ![Workflows green](screenshots/L4_A10_workflows_green.png)
-### Updated by Coder-sus on 2026-05-27 10:51:25 [Commit: ba8ad41]

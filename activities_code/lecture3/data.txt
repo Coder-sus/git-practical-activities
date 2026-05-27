@@ -1,0 +1,4 @@
+The quick brown fox jumps over the lazy dog.
+This is a sample text file used for vowel frequency analysis.
+GitHub Actions automates repetitive tasks in the development workflow.
+Australia is a beautiful country with amazing natural wonders.

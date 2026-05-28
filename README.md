@@ -1,5 +1,5 @@
 # Git Practical Activities
-**Student:** Coder-sus | **University:** UTS
+**Student:** Tushar Kaushik
 
 ---
 
